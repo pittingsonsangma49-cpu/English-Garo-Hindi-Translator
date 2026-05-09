@@ -4,10 +4,11 @@
 
 @layer base {
   body {
-    @apply min-h-screen font-sans bg-slate-950 text-slate-100;
-    background-image: radial-gradient(circle at top left, rgba(56,189,248,0.18), transparent 26%), radial-gradient(circle at bottom right, rgba(168,85,247,0.14), transparent 20%);
-    background-attachment: fixed;
-    background-color: #0f172a;
+    @apply min-h-screen font-sans bg-white text-slate-900;
+  }
+
+  .dark body {
+    @apply bg-slate-950 text-slate-100;
   }
 }
 
