@@ -16,16 +16,36 @@ app.use(express.static(path.join(__dirname, 'dist')));
 // ─── Data Loading ───────────────────────────────────────────────────────────
 const dictionary = JSON.parse(fs.readFileSync(path.join(__dirname, 'dictionary.json'), 'utf8'));
 let garoDictionary = null;
+let garoEntries = [];
 
 try {
   const garoDictionaryPath = path.join(__dirname, 'garo_dictionary.json');
   garoDictionary = JSON.parse(fs.readFileSync(garoDictionaryPath, 'utf8'));
+
+  garoEntries = Object.entries(garoDictionary).reduce((all, [category, content]) => {
+    if (!content || typeof content !== 'object' || category.startsWith('_')) return all;
+    for (const [key, value] of Object.entries(content)) {
+      if (key.startsWith('_')) continue;
+      if (typeof value === 'string') {
+        all.push({ english: key, garo: value, hindi: '', category });
+      } else if (typeof value === 'object') {
+        all.push({
+          english: key,
+          garo: value.garo || '',
+          hindi: value.hindi || '',
+          category,
+        });
+      }
+    }
+    return all;
+  }, []);
+
   console.log('✅ Garo dictionary loaded successfully.');
 } catch (err) {
   console.error('❌ Could not load garo_dictionary.json:', err.message);
 }
 
-const fuse = new Fuse(dictionary, {
+const fuse = new Fuse(garoEntries.concat(dictionary), {
   keys: ['english', 'garo', 'hindi'],
   threshold: 0.35,
   ignoreLocation: true,
@@ -81,6 +101,11 @@ function lookupWord(searchTerm) {
   return null;
 }
 
+function lookupGaroEntry(term) {
+  const key = term.toLowerCase().trim();
+  return garoEntries.find((entry) => entry.english.toLowerCase() === key || entry.garo.toLowerCase() === key || entry.hindi.toLowerCase() === key) || null;
+}
+
 function normalizeText(text) {
   return text
     .toLowerCase()
@@ -97,11 +122,19 @@ function translateToGaro(text) {
   let translated = normalized;
   const breakdown = {};
 
+  const exactEntry = lookupGaroEntry(normalized);
+  if (exactEntry) {
+    translated = exactEntry.garo;
+    breakdown.source = 'Exact Garo dictionary match';
+    breakdown.category = exactEntry.category;
+    return { translated, breakdown };
+  }
+
   const countingMatch = normalized.match(/^(one|two|three|four|five|six|seven|eight|nine|ten)\s+(\w+)$/);
   if (countingMatch) {
     const [, numWord, noun] = countingMatch;
     const numMap = { one: 'Gni', two: 'Gni', three: 'Gittam', four: 'Bri', five: 'Bonga', six: 'Dok', seven: 'Sni', eight: 'Chet', nine: 'Sku', ten: 'Chiking' };
-    const nounEntry = dictionary.find(item => item.english.toLowerCase() === noun);
+    const nounEntry = lookupGaroEntry(noun);
     if (nounEntry) {
       translated = `${getClassifier(nounEntry.category)} ${numMap[numWord]} ${nounEntry.garo}`;
       breakdown.classifier = `${getClassifier(nounEntry.category)} (${nounEntry.category} classifier)`;
@@ -122,13 +155,15 @@ function translateToGaro(text) {
   }
 
   const translatedWords = words.map((word) => {
+    const entry = lookupGaroEntry(word);
+    if (entry) return entry.garo;
     const result = fuse.search(word);
-    if (result.length > 0) return result[0].item.garo;
+    if (result.length > 0) return result[0].item.garo || word;
     return word;
   });
 
   translated = translatedWords.join(' ');
-  breakdown.morphology = 'Morphology-aware lookup with word-level mapping';
+  breakdown.morphology = 'Morphology-aware lookup with Garo dictionary and word-level mapping';
   return { translated, breakdown };
 }
 
@@ -162,7 +197,7 @@ app.post('/translate', handleTranslate);
 
 app.get('/api/dictionary', (req, res) => {
   const { query, category } = req.query;
-  let results = dictionary;
+  let results = garoEntries.length ? garoEntries : dictionary;
 
   if (query) {
     results = fuse.search(query).map((r) => r.item);
