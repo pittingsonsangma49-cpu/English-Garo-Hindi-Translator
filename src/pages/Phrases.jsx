@@ -1,38 +1,173 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 
-function Phrases() {
-  const [phrases, setPhrases] = useState([]);
+export default function Phrases() {
+  const [dictionary, setDictionary] = useState(null)
+  const [phrases, setPhrases] = useState([])
+  const [selectedCategory, setSelectedCategory] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [practiceMode, setPracticeMode] = useState(false)
+  const [revealedPhrases, setRevealedPhrases] = useState(new Set())
 
   useEffect(() => {
-    fetch('/api/phrases')
+    // Load dictionary and extract phrases from _examples
+    fetch('/garo_dictionary.json')
       .then(res => res.json())
-      .then(data => setPhrases(data))
-      .catch(err => console.error(err));
-  }, []);
+      .then(data => {
+        setDictionary(data)
+        extractPhrases(data)
+      })
+      .catch(err => console.error('Failed to load dictionary:', err))
+  }, [])
+
+  const extractPhrases = (dict) => {
+    const allPhrases = []
+
+    for (const [category, content] of Object.entries(dict)) {
+      if (category.startsWith('_') || !content._examples) continue
+
+      content._examples.forEach(example => {
+        allPhrases.push({
+          ...example,
+          category
+        })
+      })
+    }
+
+    setPhrases(allPhrases)
+  }
+
+  const getFilteredPhrases = () => {
+    let filtered = phrases
+
+    if (selectedCategory) {
+      filtered = filtered.filter(phrase => phrase.category === selectedCategory)
+    }
+
+    if (searchTerm) {
+      filtered = filtered.filter(phrase =>
+        phrase.english.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        phrase.garo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        phrase.hindi.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    }
+
+    return filtered
+  }
+
+  const toggleReveal = (index) => {
+    const newRevealed = new Set(revealedPhrases)
+    if (newRevealed.has(index)) {
+      newRevealed.delete(index)
+    } else {
+      newRevealed.add(index)
+    }
+    setRevealedPhrases(newRevealed)
+  }
+
+  const categories = [...new Set(phrases.map(p => p.category))]
+  const filteredPhrases = getFilteredPhrases()
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 p-8 shadow-2xl shadow-slate-950/20 backdrop-blur-md">
-        <div className="text-center">
-          <h1 className="text-3xl font-semibold text-slate-900 dark:text-white">Common Phrases</h1>
-          <p className="mt-2 text-slate-600 dark:text-slate-400">Daily conversation phrases in Garo</p>
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Common Phrases</h1>
+          <p className="text-lg text-gray-600">Learn everyday Garo expressions</p>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {phrases.map((phrase, index) => (
-          <div key={index} className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 p-6 shadow-lg shadow-slate-950/20">
-            <h3 className="text-lg font-semibold mb-2 text-slate-900 dark:text-white">{phrase.english}</h3>
-            <p className="text-primary-600 font-medium mb-1">{phrase.garo}</p>
-            <p className="text-slate-600 dark:text-slate-400 mb-2">{phrase.hindi}</p>
-            {phrase.explanation && (
-              <p className="text-sm text-slate-500 dark:text-slate-400">{phrase.explanation}</p>
-            )}
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+          <div className="grid md:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B4332] focus:border-transparent"
+              >
+                <option value="">All categories</option>
+                {categories.map(cat => (
+                  <option key={cat} value={cat}>
+                    {cat.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search phrases..."
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B4332] focus:border-transparent"
+              />
+            </div>
+
+            <div className="flex items-end">
+              <button
+                onClick={() => setPracticeMode(!practiceMode)}
+                className={`w-full p-3 rounded-lg font-medium transition-colors ${
+                  practiceMode
+                    ? 'bg-[#1B4332] text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                {practiceMode ? 'Exit Practice' : 'Practice Mode'}
+              </button>
+            </div>
           </div>
-        ))}
+
+          <div className="text-center">
+            <p className="text-gray-600">
+              Showing {filteredPhrases.length} phrases
+              {practiceMode && ' (click cards to reveal answers)'}
+            </p>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredPhrases.map((phrase, index) => (
+            <div
+              key={index}
+              onClick={() => practiceMode && toggleReveal(index)}
+              className={`bg-white rounded-xl shadow-md border border-gray-200 p-6 hover:shadow-lg transition-all cursor-pointer ${
+                practiceMode ? 'hover:bg-gray-50' : ''
+              }`}
+            >
+              <div className="mb-4">
+                <p className="text-lg font-semibold text-gray-900 mb-2">
+                  🇬🇧 {phrase.english}
+                </p>
+                <p className="text-sm text-gray-600 mb-2">
+                  Category: {phrase.category.replace(/_/g, ' ')}
+                </p>
+              </div>
+
+              {!practiceMode || revealedPhrases.has(index) ? (
+                <div>
+                  <p className="text-[#1B4332] font-medium text-base mb-2">
+                    {phrase.garo}
+                  </p>
+                  <p className="text-gray-600 text-sm">
+                    🇮🇳 {phrase.hindi}
+                  </p>
+                </div>
+              ) : (
+                <div className="text-center py-4">
+                  <p className="text-gray-500">Click to reveal Garo translation</p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {filteredPhrases.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">No phrases found matching your criteria</p>
+          </div>
+        )}
       </div>
     </div>
-  );
+  )
 }
-
-export default Phrases;

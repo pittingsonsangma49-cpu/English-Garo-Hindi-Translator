@@ -298,6 +298,132 @@ app.get('/garo-categories', (req, res) => {
   res.json({ categories });
 });
 
+app.post('/garo-sentence', async (req, res) => {
+  const { text, direction } = req.body;
+
+  if (!text || typeof text !== 'string') {
+    return res.status(400).json({ error: 'Text is required for translation.' });
+  }
+
+  try {
+    const targetDirection = direction || 'en-to-garo';
+
+    if (targetDirection === 'en-to-garo') {
+      // Use Gemini API for complex sentences
+      const apiKey = process.env.VITE_GEMINI_API_KEY;
+      if (!apiKey) {
+        return res.status(500).json({ error: 'Gemini API key not configured.' });
+      }
+
+      // Build context from dictionary
+      const dictContext = buildDictionaryContext(garoDictionary);
+
+      const prompt = `
+You are an expert Garo language translator.
+Use ONLY the following Garo vocabulary when translating.
+If a word is not in the vocabulary list, transliterate it phonetically into Garo script.
+
+GARO VOCABULARY REFERENCE:
+${dictContext}
+
+GARO GRAMMAR RULES:
+1. Counted nouns: NOUN + CLASSIFIER-NUMBER (e.g. achak mang-sa = one dog)
+2. Classifiers: mang=animals, sak=people, gong=money, king=books/paper, ge=everything else
+3. Numbers: sa=1, gni=2, gittam=3, bri=4, bonga=5, dok=6, sni=7, chet=8, sku=9, chiking=10
+4. Verb endings: present=-enga, past=-aha, future=-gen
+5. Negation: add ong·ja after the verb
+6. Questions: add maia (what) or bano (where) or sawa (who) at the end
+
+TRANSLATE THIS TEXT TO GARO:
+"${text}"
+
+Return ONLY the Garo translation. No explanation. No romanization guide.
+      `;
+
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.1, maxOutputTokens: 2048 }
+        })
+      });
+
+      const data = await response.json();
+      const translated = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Translation failed';
+
+      return res.json({
+        original: text,
+        translated,
+        language: 'garo',
+        source: 'AI Translation'
+      });
+    } else if (targetDirection === 'garo-to-en') {
+      // Translate from Garo to English
+      const apiKey = process.env.VITE_GEMINI_API_KEY;
+      if (!apiKey) {
+        return res.status(500).json({ error: 'Gemini API key not configured.' });
+      }
+
+      const dictContext = buildDictionaryContext(garoDictionary);
+
+      const prompt = `
+You are an expert Garo language translator.
+Use the following Garo vocabulary reference to translate accurately.
+
+GARO VOCABULARY REFERENCE:
+${dictContext}
+
+TRANSLATE THIS GARO TEXT TO ENGLISH:
+"${text}"
+
+Return ONLY the English translation. No explanation.
+      `;
+
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.1, maxOutputTokens: 2048 }
+        })
+      });
+
+      const data = await response.json();
+      const translated = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Translation failed';
+
+      return res.json({
+        original: text,
+        translated,
+        language: 'english',
+        source: 'AI Translation'
+      });
+    }
+
+    return res.status(400).json({ error: 'Unsupported translation direction.' });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+// Helper function to build dictionary context for Gemini
+function buildDictionaryContext(dictionary) {
+  const skip = new Set(['_meta', 'classifier_engine']);
+  const lines = [];
+
+  for (const [category, content] of Object.entries(dictionary)) {
+    if (skip.has(category) || typeof content !== 'object') continue;
+    for (const [key, value] of Object.entries(content)) {
+      if (key.startsWith('_')) continue;
+      const garo  = typeof value === 'object' ? value.garo  : value;
+      const hindi = typeof value === 'object' ? value.hindi : '';
+      lines.push(`${key} = ${garo} (Hindi: ${hindi})`);
+    }
+  }
+
+  return lines.join('\n');
+}
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });

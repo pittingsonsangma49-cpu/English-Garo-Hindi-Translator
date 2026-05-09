@@ -7,10 +7,11 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/translate': {
-        target: 'http://localhost:3001',
-        changeOrigin: true,
-      },
-    },
-  },
+      '/translate': 'http://localhost:3001',
+      '/garo-translate': 'http://localhost:3001',
+      '/garo-category': 'http://localhost:3001',
+      '/garo-categories': 'http://localhost:3001',
+      '/garo-sentence': 'http://localhost:3001',
+    }
+  }
 })
