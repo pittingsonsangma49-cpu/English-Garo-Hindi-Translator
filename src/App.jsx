@@ -27,7 +27,7 @@ function App() {
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-2xl bg-sky-500/20 flex items-center justify-center text-sky-600 dark:text-sky-200 font-bold">G</div>
                   <div>
-                    <p className="text-sm text-sky-600 dark:text-sky-300">A'chik Garo</p>
+                    <p className="text-sm text-sky-600 dark:text-sky-300">A&apos;chik Garo</p>
                     <h1 className="text-xl font-semibold text-slate-900 dark:text-white">Semantic Translator</h1>
                   </div>
                 </div>

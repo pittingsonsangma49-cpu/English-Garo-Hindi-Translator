@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 
 export default function Verbs() {
-  const [dictionary, setDictionary] = useState(null)
   const [verbs, setVerbs] = useState([])
   const [selectedVerb, setSelectedVerb] = useState('')
 
@@ -10,7 +9,6 @@ export default function Verbs() {
     fetch('/garo_dictionary.json')
       .then(res => res.json())
       .then(data => {
-        setDictionary(data)
         extractVerbs(data)
       })
       .catch(err => console.error('Failed to load dictionary:', err))

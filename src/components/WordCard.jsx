@@ -1,4 +1,6 @@
-export default function WordCard({ english, garo, hindi, classifier, category }) {
+import PropTypes from 'prop-types'
+
+export default function WordCard({ english, garo, hindi, classifier }) {
   const getClassifierColor = (classifier) => {
     const colors = {
       mang: 'bg-green-100 text-green-800',
@@ -23,4 +25,11 @@ export default function WordCard({ english, garo, hindi, classifier, category })
       <p className="text-gray-600 text-sm">{hindi}</p>
     </div>
   )
+}
+
+WordCard.propTypes = {
+  english: PropTypes.string.isRequired,
+  garo: PropTypes.string.isRequired,
+  hindi: PropTypes.string.isRequired,
+  classifier: PropTypes.string.isRequired,
 }

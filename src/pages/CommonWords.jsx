@@ -121,7 +121,7 @@ export default function CommonWords() {
           {selectedCategory && (
             <div className="text-center">
               <p className="text-gray-600">
-                Showing {words.length} words in "{selectedCategory.replace(/_/g, ' ')}"
+                Showing {words.length} words in &quot;{selectedCategory.replace(/_/g, ' ')}&quot;
               </p>
             </div>
           )}

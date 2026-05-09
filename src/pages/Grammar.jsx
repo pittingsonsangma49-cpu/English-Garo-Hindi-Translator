@@ -201,7 +201,7 @@ export default function Grammar() {
               <div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">Negation</h3>
                 <p className="text-gray-600 mb-6">
-                  To make a verb negative, add "ong·ja" after the verb.
+                  To make a verb negative, add &quot;ong·ja&quot; after the verb.
                 </p>
 
                 <div className="grid md:grid-cols-2 gap-6">

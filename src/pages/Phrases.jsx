@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 
 export default function Phrases() {
-  const [dictionary, setDictionary] = useState(null)
   const [phrases, setPhrases] = useState([])
   const [selectedCategory, setSelectedCategory] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
@@ -13,7 +12,6 @@ export default function Phrases() {
     fetch('/garo_dictionary.json')
       .then(res => res.json())
       .then(data => {
-        setDictionary(data)
         extractPhrases(data)
       })
       .catch(err => console.error('Failed to load dictionary:', err))
