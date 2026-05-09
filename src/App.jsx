@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Translator from './pages/Translator';
-import Dictionary from './pages/Dictionary';
+import Translation from './pages/Translation';
+import CommonWords from './pages/CommonWords';
 import Phrases from './pages/Phrases';
-import VerbsGrammar from './pages/VerbsGrammar';
+import Verbs from './pages/Verbs';
+import Grammar from './pages/Grammar';
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -33,10 +34,11 @@ function App() {
                 </div>
 
                 <div className="hidden md:flex items-center gap-4">
-                  <Link to="/" className="text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white px-3 py-2 rounded-lg transition">Translator</Link>
-                  <Link to="/dictionary" className="text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white px-3 py-2 rounded-lg transition">Dictionary</Link>
+                  <Link to="/" className="text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white px-3 py-2 rounded-lg transition">Translation</Link>
+                  <Link to="/common-words" className="text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white px-3 py-2 rounded-lg transition">Common Words</Link>
                   <Link to="/phrases" className="text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white px-3 py-2 rounded-lg transition">Phrases</Link>
-                  <Link to="/verbs-grammar" className="text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white px-3 py-2 rounded-lg transition">Verbs & Grammar</Link>
+                  <Link to="/verbs" className="text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white px-3 py-2 rounded-lg transition">Verbs</Link>
+                  <Link to="/grammar" className="text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white px-3 py-2 rounded-lg transition">Grammar</Link>
                 </div>
 
                 <div className="flex items-center gap-3">
@@ -60,10 +62,11 @@ function App() {
             {menuOpen && (
               <div className="border-t border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 md:hidden">
                 <div className="max-w-7xl mx-auto px-4 py-3 space-y-2 sm:px-6">
-                  <Link to="/" className="block rounded-lg px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Translator</Link>
-                  <Link to="/dictionary" className="block rounded-lg px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Dictionary</Link>
+                  <Link to="/" className="block rounded-lg px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Translation</Link>
+                  <Link to="/common-words" className="block rounded-lg px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Common Words</Link>
                   <Link to="/phrases" className="block rounded-lg px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Phrases</Link>
-                  <Link to="/verbs-grammar" className="block rounded-lg px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Verbs & Grammar</Link>
+                  <Link to="/verbs" className="block rounded-lg px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Verbs</Link>
+                  <Link to="/grammar" className="block rounded-lg px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Grammar</Link>
                 </div>
               </div>
             )}
@@ -71,10 +74,11 @@ function App() {
 
           <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
             <Routes>
-              <Route path="/" element={<Translator />} />
-              <Route path="/dictionary" element={<Dictionary />} />
+              <Route path="/" element={<Translation />} />
+              <Route path="/common-words" element={<CommonWords />} />
               <Route path="/phrases" element={<Phrases />} />
-              <Route path="/verbs-grammar" element={<VerbsGrammar />} />
+              <Route path="/verbs" element={<Verbs />} />
+              <Route path="/grammar" element={<Grammar />} />
             </Routes>
           </main>
         </div>
