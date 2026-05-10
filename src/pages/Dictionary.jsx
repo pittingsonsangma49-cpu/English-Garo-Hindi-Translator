@@ -1,91 +1,96 @@
-import React, { useState, useEffect } from 'react';
+import { useMemo, useState } from 'react'
+import dictionaryJson from '../data/garo_dictionary.json'
 
 function Dictionary() {
-  const [search, setSearch] = useState('');
-  const [results, setResults] = useState([]);
-  const [category, setCategory] = useState('');
+  const [search, setSearch] = useState('')
+  const [category, setCategory] = useState('')
 
-  useEffect(() => {
-    if (search.trim() || category) {
-      fetch(`/api/dictionary?query=${encodeURIComponent(search)}&category=${category}`)
-        .then((res) => res.json())
-        .then((data) => setResults(data))
-        .catch((err) => console.error(err));
-    } else {
-      setResults([]);
+  const categories = useMemo(() => Object.keys(dictionaryJson.dictionary_data), [])
+
+  const entries = useMemo(() => {
+    const allEntries = []
+    for (const [section, content] of Object.entries(dictionaryJson.dictionary_data)) {
+      if (section.startsWith('_')) continue
+      for (const [english, garo] of Object.entries(content)) {
+        if (english === '_classifier') continue
+        allEntries.push({
+          english,
+          garo,
+          category: section.replace(/_/g, ' '),
+        })
+      }
     }
-  }, [search, category]);
+    return allEntries
+  }, [])
+
+  const filteredEntries = useMemo(() => {
+    const query = search.trim().toLowerCase()
+    return entries.filter((entry) => {
+      if (category && entry.category !== category.replace(/_/g, ' ')) return false
+      if (!query) return true
+      return (
+        entry.english.toLowerCase().includes(query) ||
+        entry.garo.toLowerCase().includes(query) ||
+        entry.category.toLowerCase().includes(query)
+      )
+    })
+  }, [category, entries, search])
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 p-8 shadow-2xl shadow-slate-950/20 backdrop-blur-md">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <h1 className="text-3xl font-semibold text-slate-900 dark:text-white">Master Garo Dictionary</h1>
-            <p className="mt-2 max-w-2xl text-slate-600 dark:text-slate-400">Search English, Garo, or Hindi vocabulary from the uploaded master dictionary. Results are fuzzy, semantic, and category-aware.</p>
-          </div>
-          <div className="text-slate-500 dark:text-slate-400">{results.length > 0 ? `${results.length} entries found` : 'Search to see results'}</div>
-        </div>
-      </div>
-
-      <div className="grid gap-6">
-        <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 p-6 shadow-lg shadow-slate-950/20">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-            <input
-              type="text"
-              className="input-field flex-1 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100"
-              placeholder="Search English, Garo, or Hindi..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <select
-              className="input-field w-full sm:w-48 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            >
-              <option value="">All Categories</option>
-              <option value="animal">Animal</option>
-              <option value="food">Food</option>
-              <option value="color">Color</option>
-            </select>
+    <div className="fade-page min-h-screen py-16">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-10 rounded-[12px] border border-slate-200 bg-white p-8 shadow-[0_2px_12px_rgba(0,0,0,0.07)]">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h1 className="text-3xl font-semibold text-[#1A1A2E]">Garo Dictionary</h1>
+              <p className="mt-3 max-w-2xl text-base leading-7 text-[#555555]">Search the full dictionary locally. Filter instantly by category and keyword without any API request.</p>
+            </div>
+            <div className="text-sm font-semibold text-[#2E75B6]">{filteredEntries.length} entries</div>
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950/80 shadow-lg shadow-slate-950/20">
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-left text-sm text-slate-900 dark:text-slate-200">
-              <thead className="bg-slate-50 dark:bg-slate-900/80 text-slate-700 dark:text-slate-400">
-                <tr>
-                  <th className="px-4 py-3">English</th>
-                  <th className="px-4 py-3">Garo</th>
-                  <th className="px-4 py-3">Hindi</th>
-                  <th className="px-4 py-3">Category</th>
-                  <th className="px-4 py-3">Classifier</th>
-                </tr>
-              </thead>
-              <tbody>
-                {results.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="px-4 py-10 text-center text-slate-500 dark:text-slate-500">No entries found yet. Adjust your search or select a category.</td>
-                  </tr>
-                ) : (
-                  results.map((item, index) => (
-                    <tr key={index} className="border-t border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900/70 transition-colors">
-                      <td className="px-4 py-3">{item.english}</td>
-                      <td className="px-4 py-3">{item.garo}</td>
-                      <td className="px-4 py-3">{item.hindi || '—'}</td>
-                      <td className="px-4 py-3">{item.category}</td>
-                      <td className="px-4 py-3">{item.classifier || 'none'}</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+        <div className="mb-6 grid gap-4 rounded-[12px] bg-white p-6 shadow-[0_2px_12px_rgba(0,0,0,0.07)] md:grid-cols-[1.6fr_0.9fr]">
+          <input
+            type="text"
+            placeholder="Search English or Garo words..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="input-field"
+          />
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="input-field"
+          >
+            <option value="">All categories</option>
+            {categories.map((section) => (
+              <option key={section} value={section}>
+                {section.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())}
+              </option>
+            ))}
+          </select>
         </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {filteredEntries.map((entry, index) => (
+            <div key={`${entry.english}-${index}`} className="rounded-[12px] border border-slate-200 bg-white p-5 shadow-[0_2px_12px_rgba(0,0,0,0.05)]">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-lg font-semibold text-[#1A1A2E]">{entry.english}</p>
+                <span className="rounded-full bg-[#E8F0FF] px-3 py-1 text-xs font-semibold text-[#1F4E79]">{entry.category}</span>
+              </div>
+              <p className="mt-4 text-base text-[#1A1A2E]">{entry.garo}</p>
+            </div>
+          ))}
+        </div>
+
+        {filteredEntries.length === 0 && (
+          <div className="mt-10 rounded-[12px] border border-slate-200 bg-white p-8 text-center text-[#555555] shadow-[0_2px_12px_rgba(0,0,0,0.05)]">
+            No dictionary matches found. Try a different search term or category.
+          </div>
+        )}
       </div>
     </div>
-  );
+  )
 }
 
 export default Dictionary;

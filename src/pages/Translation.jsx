@@ -71,14 +71,14 @@ export default function Translation() {
   }
 
   return (
-    <div className="fade-page min-h-screen py-12">
+    <div className="fade-page min-h-screen bg-[#F8FAFC] py-12">
       {/* Hero Section */}
       <div className="text-center mb-12">
-        <h1 className="text-5xl font-bold text-[#F1F5F9] mb-4">Translate to Garo</h1>
-        <p className="text-xl text-[#94A3B8] mb-6">Powered by local translation logic and grammar-aware phrase matching</p>
+        <h1 className="text-5xl font-bold text-[#1A1A2E] mb-4">Translate to Garo</h1>
+        <p className="text-xl text-[#555555] mb-6">Powered by local translation logic and grammar-aware phrase matching</p>
         <div className="flex justify-center gap-4">
-          <span className="px-4 py-2 bg-[#1E293B] text-[#F1F5F9] rounded-full border border-[#334155]">English</span>
-          <span className="px-4 py-2 bg-[#10B981] text-white rounded-full">Garo</span>
+          <span className="px-4 py-2 bg-[#F0F5FA] text-[#1A1A2E] rounded-full border border-[#B0CFF0]">English</span>
+          <span className="px-4 py-2 bg-[#2E75B6] text-white rounded-full border border-[#2E75B6]">Garo</span>
         </div>
       </div>
 
@@ -87,7 +87,7 @@ export default function Translation() {
           <form onSubmit={handleSubmit} className="card">
             <div className="mb-4 grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="block text-sm text-[#94A3B8] mb-2">Source language</label>
+                <label className="block text-sm text-[#555555] mb-2">Source language</label>
                 <select
                   value={sourceLanguage}
                   onChange={(e) => handleLanguageChange(e.target.value)}
@@ -99,7 +99,7 @@ export default function Translation() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm text-[#94A3B8] mb-2">Target language</label>
+                <label className="block text-sm text-[#555555] mb-2">Target language</label>
                 <select value={targetLanguage} className="input-field w-full" disabled>
                   <option value="garo">Garo</option>
                   <option value="en">English</option>
@@ -116,7 +116,7 @@ export default function Translation() {
             />
 
             {errorMessage && (
-              <div className="mt-4 rounded-2xl bg-red-950/80 border border-red-700 p-4 text-red-100">
+              <div className="mt-4 rounded-lg bg-[#FEE2E2] border border-[#FCA5A5] p-4 text-[#991B1B]">
                 {errorMessage}
               </div>
             )}
@@ -135,7 +135,7 @@ export default function Translation() {
               <button
                 type="button"
                 onClick={copyToClipboard}
-                className="px-3 py-1 bg-[#10B981] text-white rounded text-sm hover:bg-[#059669] transition"
+                className="px-3 py-1 bg-[#2E75B6] text-white rounded text-sm hover:bg-[#1F4E79] transition"
               >
                 Copy
               </button>
@@ -143,22 +143,22 @@ export default function Translation() {
 
             <div className="h-48 p-4">
               {loading ? (
-                <div className="flex h-full flex-col items-center justify-center gap-3 text-[#94A3B8]">
-                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-white/20 border-t-[#10B981]" />
+                <div className="flex h-full flex-col items-center justify-center gap-3 text-[#555555]">
+                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#B0CFF0] border-t-[#2E75B6]" />
                   <p>Translating...</p>
                 </div>
               ) : outputText ? (
-                <div className="text-lg text-[#F1F5F9] whitespace-pre-wrap break-words leading-relaxed">
+                <div className="text-lg text-[#1A1A2E] whitespace-pre-wrap break-words leading-relaxed">
                   {outputText}
                 </div>
               ) : (
-                <p className="text-[#94A3B8] italic">Translation will appear here...</p>
+                <p className="text-[#555555] italic">Translation will appear here...</p>
               )}
             </div>
 
             {breakdown && (
               <div className="absolute bottom-4 left-4">
-                <span className="px-2 py-1 bg-[#1E293B] text-[#94A3B8] rounded text-xs border border-[#334155]">
+                <span className="px-2 py-1 bg-[#F0F5FA] text-[#555555] rounded text-xs border border-[#B0CFF0]">
                   Source: {breakdown.source}
                 </span>
               </div>
