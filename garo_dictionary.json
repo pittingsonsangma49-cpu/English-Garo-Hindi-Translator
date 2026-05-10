@@ -438,8 +438,84 @@
       "hindi": "मुझे नहीं पता"
     },
     "come here": {
-      "garo": "Iano re·ba",
+      "garo": "Ianona re·babo",
       "hindi": "यहाँ आओ"
+    },
+    "wait": {
+      "garo": "Damo",
+      "hindi": "इंतज़ार करें"
+    },
+    "tasty": {
+      "garo": "Toa",
+      "hindi": "स्वादिष्ट"
+    },
+    "delicious": {
+      "garo": "Toa",
+      "hindi": "स्वादिष्ट"
+    },
+    "not tasty": {
+      "garo": "Touja",
+      "hindi": "स्वादिष्ट नहीं"
+    },
+    "quick": {
+      "garo": "Tarkbo",
+      "hindi": "तेज़"
+    },
+    "quickly": {
+      "garo": "Tarake",
+      "hindi": "जल्दी"
+    },
+    "no more": {
+      "garo": "Dongja",
+      "hindi": "अब और नहीं"
+    },
+    "it exists": {
+      "garo": "Donga",
+      "hindi": "यह मौजूद है"
+    },
+    "i don't care": {
+      "garo": "Anga Dal·e Ra·ja",
+      "hindi": "मुझे परवाह नहीं है"
+    },
+    "let's": {
+      "garo": "Hai",
+      "hindi": "चलो"
+    },
+    "let's eat": {
+      "garo": "Hai cha·ha",
+      "hindi": "चलो खाएं"
+    },
+    "let's go": {
+      "garo": "Hai re·naha",
+      "hindi": "चलो चलते हैं"
+    },
+    "let's sleep": {
+      "garo": "Hai tusina",
+      "hindi": "चलो सोते हैं"
+    },
+    "let's drink": {
+      "garo": "Hai ringaha",
+      "hindi": "चलो पीते हैं"
+    },
+    "let's sit": {
+      "garo": "Hai asongha",
+      "hindi": "चलो बैठते हैं"
+    },
+    "give me water": {
+      "garo": "Angna chi on·bo",
+      "hindi": "मुझे पानी दो"
+    },
+    "can you give me water?": {
+      "garo": "Angna chi on·a mangengma?",
+      "hindi": "क्या आप मुझे पानी दे सकते हैं?"
+    },
+    "may i sit down?": {
+      "garo": "Anga asongna mangengma?",
+      "hindi": "क्या मैं बैठ सकता हूँ?"
+    },
+    "come quick!": {
+      "garo": "Tarake re·babo!",
+      "hindi": "जल्दी आओ!"
     },
     "where are you from?": {
       "garo": "Na·a bano-ni?",
@@ -1607,7 +1683,28 @@
     },
     "swim": {
       "garo": "Jroa",
-      "hindi": "तैरना"
+      "hindi": "तैरना",
+      "note": "also means 'sting / stinging sensation' after insect bite"
+    },
+    "drive": {
+      "garo": "Sala",
+      "hindi": "चालित करना",
+      "note": "also means 'pull' — context determines meaning"
+    },
+    "pull": {
+      "garo": "Sala",
+      "hindi": "खींचना",
+      "note": "also means 'drive' — context determines meaning"
+    },
+    "pour": {
+      "garo": "Rua",
+      "hindi": "डालना",
+      "note": "as a noun means 'axe' — context determines meaning"
+    },
+    "shoot": {
+      "garo": "Goa",
+      "hindi": "गोली मारना",
+      "note": "with suffix -ta becomes 'goata' meaning 'to throw'"
     },
     "bite": {
       "garo": "Chika",
@@ -2189,9 +2286,17 @@
       "garo": "Chibroka",
       "hindi": "बेस्वाद"
     },
-    "delicious": {
-      "garo": "Cha·toa",
+    "tasty": {
+      "garo": "Toa",
       "hindi": "स्वादिष्ट"
+    },
+    "delicious": {
+      "garo": "Toa",
+      "hindi": "स्वादिष्ट"
+    },
+    "not tasty": {
+      "garo": "Touja",
+      "hindi": "स्वादिष्ट नहीं"
     },
     "smelly / stinky": {
       "garo": "Senga",
@@ -4152,7 +4257,7 @@
       }
     ],
     "market": {
-      "garo": "Anti",
+      "garo": "Anti / Bajal",
       "hindi": "बाज़ार"
     },
     "shop": {

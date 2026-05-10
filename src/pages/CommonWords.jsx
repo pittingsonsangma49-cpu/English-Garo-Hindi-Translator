@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react'
 import WordCard from '../components/WordCard'
-import garoClassifier from '../garo_classifier (1).js'
+import garoClassifier from '../garo_classifier.js'
 
 export default function CommonWords() {
   const [dictionary, setDictionary] = useState(null)
   const [selectedCategory, setSelectedCategory] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
-  const [count, setCount] = useState(1)
   const [categories, setCategories] = useState([])
 
   useEffect(() => {
@@ -54,15 +53,6 @@ export default function CommonWords() {
     }
 
     return words
-  }
-
-  const getCountedPhrase = (word) => {
-    if (!word || count < 1 || count > 10) return null
-    try {
-      return garoClassifier.countNoun(word.garo, count, word.category)
-    } catch (error) {
-      return null
-    }
   }
 
   const words = getWordsForCategory()
