@@ -68,85 +68,63 @@ export default function CommonWords() {
   const words = getWordsForCategory()
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="fade-page min-h-screen py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Page Title */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Common Words</h1>
-          <p className="text-lg text-gray-600">Explore the Garo dictionary by category</p>
+          <div className="flex justify-center items-center gap-3 mb-4">
+            <div className="w-12 h-12 bg-[#10B981] rounded-full flex items-center justify-center">
+              <span className="text-white text-2xl">📚</span>
+            </div>
+            <h1 className="text-4xl font-bold text-[#F1F5F9]">Common Words</h1>
+          </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-          <div className="grid md:grid-cols-3 gap-4 mb-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B4332] focus:border-transparent"
-              >
-                <option value="">Select a category...</option>
-                {categories.map(cat => (
-                  <option key={cat} value={cat}>
-                    {cat.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                  </option>
-                ))}
-              </select>
-            </div>
+        {/* Category Grid */}
+        <div className="flex flex-wrap justify-center gap-3 mb-8">
+          {categories.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition ${
+                selectedCategory === cat
+                  ? 'bg-[#10B981] text-white'
+                  : 'bg-[#1E293B] text-[#94A3B8] border border-[#334155] hover:border-[#10B981]'
+              }`}
+            >
+              {cat.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+            </button>
+          ))}
+        </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search words..."
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B4332] focus:border-transparent"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Count</label>
-              <select
-                value={count}
-                onChange={(e) => setCount(parseInt(e.target.value))}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B4332] focus:border-transparent"
-              >
-                {Array.from({length: 10}, (_, i) => i + 1).map(n => (
-                  <option key={n} value={n}>{n}</option>
-                ))}
-              </select>
+        {/* Search Bar */}
+        <div className="max-w-md mx-auto mb-8">
+          <div className="relative">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search words..."
+              className="input-field pl-10"
+            />
+            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#94A3B8]">
+              🔍
             </div>
           </div>
-
-          {selectedCategory && (
-            <div className="text-center">
-              <p className="text-gray-600">
-                Showing {words.length} words in &quot;{selectedCategory.replace(/_/g, ' ')}&quot;
-              </p>
-            </div>
-          )}
         </div>
 
+        {/* Word Cards Grid */}
         {selectedCategory && (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {words.map((word, index) => (
-              <div key={index}>
-                <WordCard {...word} />
-                {count > 1 && (
-                  <div className="mt-2 p-3 bg-[#D4A017] bg-opacity-10 rounded-lg border border-[#D4A017] border-opacity-20">
-                    <p className="text-sm text-gray-700">
-                      <span className="font-medium">{count}</span> = {getCountedPhrase(word) || 'N/A'}
-                    </p>
-                  </div>
-                )}
-              </div>
+              <WordCard key={index} {...word} />
             ))}
           </div>
         )}
 
         {!selectedCategory && (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">Select a category to explore words</p>
+            <p className="text-[#94A3B8] text-lg">Select a category to explore words</p>
           </div>
         )}
       </div>

@@ -26,10 +26,10 @@ export default function Translation() {
     try {
       let result
       if (direction === 'en-to-garo') {
-        result = await translateToGaro(inputText, dictionary)
+        result = await translateToGaro(inputText)
         setOutputText(result)
       } else {
-        result = await translateFromGaro(inputText, dictionary)
+        result = await translateFromGaro(inputText)
         setOutputText(result)
       }
 
@@ -43,15 +43,15 @@ export default function Translation() {
 
         if (dictResult.found) {
           setBreakdown({
-            source: 'Dictionary lookup',
+            source: 'Dictionary',
             category: dictResult.category,
             classifier: dictResult.classifier
           })
         } else {
-          setBreakdown({ source: 'AI Translation (word not in dictionary)' })
+          setBreakdown({ source: 'AI' })
         }
       } else {
-        setBreakdown({ source: 'AI Translation' })
+        setBreakdown({ source: 'AI' })
       }
     } catch (error) {
       setOutputText('Translation failed. Please try again.')
@@ -69,111 +69,107 @@ export default function Translation() {
   const isOverLimit = charCount > 2000
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Garo Language Translator</h1>
-          <p className="text-lg text-gray-600">Translate between English, Garo, and Hindi</p>
+    <div className="fade-page min-h-screen py-12">
+      {/* Hero Section */}
+      <div className="text-center mb-12">
+        <h1 className="text-5xl font-bold text-[#F1F5F9] mb-4">Translate to Garo</h1>
+        <p className="text-xl text-[#94A3B8] mb-6">Powered by AI + 700+ word dictionary</p>
+        <div className="flex justify-center gap-4">
+          <span className="px-4 py-2 bg-[#1E293B] text-[#F1F5F9] rounded-full border border-[#334155]">English</span>
+          <span className="px-4 py-2 bg-[#10B981] text-white rounded-full">Garo</span>
+          <span className="px-4 py-2 bg-[#1E293B] text-[#FCD34D] rounded-full border border-[#334155]">Hindi</span>
         </div>
+      </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-          <div className="mb-4">
-            <div className="flex justify-center space-x-4 mb-4">
-              <button
-                onClick={() => setDirection('en-to-garo')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  direction === 'en-to-garo'
-                    ? 'bg-[#1B4332] text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
+      {/* Translation Panel */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* Input Card */}
+          <div className="card">
+            <div className="mb-4">
+              <select
+                value={direction}
+                onChange={(e) => setDirection(e.target.value)}
+                className="input-field mb-4"
               >
-                English → Garo
-              </button>
-              <button
-                onClick={() => setDirection('garo-to-en')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  direction === 'garo-to-en'
-                    ? 'bg-[#1B4332] text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                Garo → English
-              </button>
+                <option value="en-to-garo">English</option>
+                <option value="garo-to-en">Garo</option>
+              </select>
             </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Input Text
-                <span className={`ml-2 text-sm ${isOverLimit ? 'text-red-500' : 'text-gray-500'}`}>
-                  {charCount}/2000
-                </span>
-              </label>
-              <textarea
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                placeholder={direction === 'en-to-garo' ? 'Enter English text...' : 'Enter Garo text...'}
-                className="w-full h-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B4332] focus:border-transparent resize-none"
-                disabled={loading}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Translation
-              </label>
-              <div className="relative">
-                <textarea
-                  value={outputText}
-                  readOnly
-                  placeholder="Translation will appear here..."
-                  className="w-full h-32 p-3 border border-gray-300 rounded-lg bg-gray-50 resize-none"
-                />
-                {outputText && (
-                  <button
-                    onClick={copyToClipboard}
-                    className="absolute top-2 right-2 bg-[#D4A017] text-[#1B4332] px-3 py-1 rounded text-sm font-medium hover:bg-[#B8950C] transition-colors"
-                  >
-                    Copy
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="flex justify-center mt-6">
+            <textarea
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              placeholder="Enter text to translate..."
+              className="input-field h-48 resize-none"
+              disabled={loading}
+            />
             <button
               onClick={handleTranslate}
-              disabled={!inputText.trim() || loading || isOverLimit}
-              className="bg-[#1B4332] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#0F2A1F] disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+              disabled={!inputText.trim() || loading}
+              className="primary-button w-full mt-4"
             >
               {loading ? 'Translating...' : 'Translate'}
             </button>
           </div>
-        </div>
 
-        {breakdown && (
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Translation Details</h3>
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm text-gray-600">Source</p>
-                <p className="font-medium">{breakdown.source}</p>
-              </div>
-              {breakdown.category && (
-                <div>
-                  <p className="text-sm text-gray-600">Category</p>
-                  <p className="font-medium">{breakdown.category}</p>
+          {/* Output Card */}
+          <div className="card relative">
+            <div className="absolute top-4 right-4">
+              <button
+                onClick={copyToClipboard}
+                className="px-3 py-1 bg-[#10B981] text-white rounded text-sm hover:bg-[#059669] transition"
+              >
+                Copy
+              </button>
+            </div>
+            <div className="h-48">
+              {outputText ? (
+                <div className="text-lg">
+                  {direction === 'en-to-garo' ? (
+                    <>
+                      <p className="text-[#34D399] font-semibold">{outputText}</p>
+                      {/* Add Hindi translation if available */}
+                    </>
+                  ) : (
+                    <p className="text-[#F1F5F9]">{outputText}</p>
+                  )}
                 </div>
-              )}
-              {breakdown.classifier && (
-                <div>
-                  <p className="text-sm text-gray-600">Classifier</p>
-                  <p className="font-medium">{breakdown.classifier}</p>
-                </div>
+              ) : (
+                <p className="text-[#94A3B8] italic">Translation will appear here...</p>
               )}
             </div>
+            {breakdown && (
+              <div className="absolute bottom-4 left-4">
+                <span className="px-2 py-1 bg-[#1E293B] text-[#94A3B8] rounded text-xs border border-[#334155]">
+                  Source: {breakdown.source}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Word Breakdown */}
+        {breakdown && breakdown.category && (
+          <div className="card mt-8">
+            <h3 className="text-xl font-semibold text-[#F1F5F9] mb-4">Word Breakdown</h3>
+            <table className="w-full text-[#F1F5F9]">
+              <thead>
+                <tr className="border-b border-[#334155]">
+                  <th className="text-left py-2">Property</th>
+                  <th className="text-left py-2">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="py-2 text-[#94A3B8]">Category</td>
+                  <td className="py-2">{breakdown.category}</td>
+                </tr>
+                <tr>
+                  <td className="py-2 text-[#94A3B8]">Classifier</td>
+                  <td className="py-2">{breakdown.classifier}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         )}
       </div>

@@ -66,103 +66,84 @@ export default function Phrases() {
   const filteredPhrases = getFilteredPhrases()
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="fade-page min-h-screen py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Common Phrases</h1>
-          <p className="text-lg text-gray-600">Learn everyday Garo expressions</p>
+        {/* Category Tabs */}
+        <div className="flex overflow-x-auto gap-2 mb-8 pb-2">
+          <button
+            onClick={() => setSelectedCategory('')}
+            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition ${
+              selectedCategory === ''
+                ? 'bg-[#10B981] text-white'
+                : 'bg-[#1E293B] text-[#94A3B8] border border-[#334155] hover:border-[#10B981]'
+            }`}
+          >
+            All Categories
+          </button>
+          {categories.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition ${
+                selectedCategory === cat
+                  ? 'bg-[#10B981] text-white'
+                  : 'bg-[#1E293B] text-[#94A3B8] border border-[#334155] hover:border-[#10B981]'
+              }`}
+            >
+              {cat.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+            </button>
+          ))}
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-          <div className="grid md:grid-cols-3 gap-4 mb-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B4332] focus:border-transparent"
-              >
-                <option value="">All categories</option>
-                {categories.map(cat => (
-                  <option key={cat} value={cat}>
-                    {cat.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search phrases..."
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B4332] focus:border-transparent"
-              />
-            </div>
-
-            <div className="flex items-end">
-              <button
-                onClick={() => setPracticeMode(!practiceMode)}
-                className={`w-full p-3 rounded-lg font-medium transition-colors ${
-                  practiceMode
-                    ? 'bg-[#1B4332] text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                {practiceMode ? 'Exit Practice' : 'Practice Mode'}
-              </button>
-            </div>
-          </div>
-
-          <div className="text-center">
-            <p className="text-gray-600">
-              Showing {filteredPhrases.length} phrases
-              {practiceMode && ' (click cards to reveal answers)'}
-            </p>
-          </div>
-        </div>
-
+        {/* Phrase Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPhrases.map((phrase, index) => (
             <div
               key={index}
               onClick={() => practiceMode && toggleReveal(index)}
-              className={`bg-white rounded-xl shadow-md border border-gray-200 p-6 hover:shadow-lg transition-all cursor-pointer ${
-                practiceMode ? 'hover:bg-gray-50' : ''
-              }`}
+              className="card hover:border-[#10B981] transition cursor-pointer"
             >
-              <div className="mb-4">
-                <p className="text-lg font-semibold text-gray-900 mb-2">
-                  🇬🇧 {phrase.english}
-                </p>
-                <p className="text-sm text-gray-600 mb-2">
-                  Category: {phrase.category.replace(/_/g, ' ')}
-                </p>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">🇬🇧</span>
+                  <p className="text-[#F1F5F9] font-medium">{phrase.english}</p>
+                </div>
+                
+                {!practiceMode || revealedPhrases.has(index) ? (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">🏔️</span>
+                      <p className="text-[#34D399] font-medium">{phrase.garo}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">🇮🇳</span>
+                      <p className="text-[#FCD34D]">{phrase.hindi}</p>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-[#94A3B8]">Click to reveal</p>
+                  </div>
+                )}
               </div>
-
-              {!practiceMode || revealedPhrases.has(index) ? (
-                <div>
-                  <p className="text-[#1B4332] font-medium text-base mb-2">
-                    {phrase.garo}
-                  </p>
-                  <p className="text-gray-600 text-sm">
-                    🇮🇳 {phrase.hindi}
-                  </p>
-                </div>
-              ) : (
-                <div className="text-center py-4">
-                  <p className="text-gray-500">Click to reveal Garo translation</p>
-                </div>
-              )}
+              
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setPracticeMode(!practiceMode)
+                  setRevealedPhrases(new Set())
+                }}
+                className="primary-button w-full mt-4"
+              >
+                Practice
+              </button>
             </div>
           ))}
         </div>
 
         {filteredPhrases.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No phrases found matching your criteria</p>
+            <p className="text-[#94A3B8] text-lg">No phrases found</p>
           </div>
         )}
       </div>

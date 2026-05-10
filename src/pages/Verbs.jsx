@@ -57,147 +57,64 @@ export default function Verbs() {
   const conjugations = selectedVerb ? getVerbConjugations(verbs.find(v => v.english === selectedVerb)) : null
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="fade-page min-h-screen py-12">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Garo Verbs</h1>
-          <p className="text-lg text-gray-600">Learn verb conjugation and tenses</p>
+        {/* Verb Search */}
+        <div className="mb-8">
+          <input
+            type="text"
+            placeholder="Search for a verb..."
+            value={selectedVerb}
+            onChange={(e) => setSelectedVerb(e.target.value)}
+            className="input-field w-full md:w-96"
+            list="verbs-list"
+          />
+          <datalist id="verbs-list">
+            {verbs.map((verb, index) => (
+              <option key={index} value={verb.english} />
+            ))}
+          </datalist>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Select a Verb</label>
-            <select
-              value={selectedVerb}
-              onChange={(e) => setSelectedVerb(e.target.value)}
-              className="w-full md:w-96 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B4332] focus:border-transparent"
-            >
-              <option value="">Choose a verb...</option>
-              {verbs.map((verb, index) => (
-                <option key={index} value={verb.english}>
-                  {verb.english} ({verb.garo})
-                </option>
-              ))}
-            </select>
+        {/* Conjugation Table */}
+        {selectedVerb && conjugations && (
+          <div className="card overflow-x-auto">
+            <table className="w-full text-[#F1F5F9]">
+              <thead>
+                <tr className="border-b border-[#334155]">
+                  <th className="text-left py-3 px-4 font-semibold">Tense</th>
+                  <th className="text-left py-3 px-4 font-semibold">Garo Ending</th>
+                  <th className="text-left py-3 px-4 font-semibold">Example</th>
+                  <th className="text-left py-3 px-4 font-semibold">Hindi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="bg-[#1E293B]">
+                  <td className="py-3 px-4 text-[#10B981] font-medium">Present</td>
+                  <td className="py-3 px-4 text-[#94A3B8]">-enga</td>
+                  <td className="py-3 px-4 text-[#34D399] font-semibold">{conjugations.present}</td>
+                  <td className="py-3 px-4 text-[#FCD34D]">{verbs.find(v => v.english === selectedVerb)?.hindi || ''}</td>
+                </tr>
+                <tr>
+                  <td className="py-3 px-4 text-[#F59E0B] font-medium">Past</td>
+                  <td className="py-3 px-4 text-[#94A3B8]">-aha</td>
+                  <td className="py-3 px-4 text-[#34D399] font-semibold">{conjugations.past}</td>
+                  <td className="py-3 px-4 text-[#FCD34D]">{verbs.find(v => v.english === selectedVerb)?.hindi || ''}ा</td>
+                </tr>
+                <tr className="bg-[#1E293B]">
+                  <td className="py-3 px-4 text-[#8B5CF6] font-medium">Future</td>
+                  <td className="py-3 px-4 text-[#94A3B8]">-gen</td>
+                  <td className="py-3 px-4 text-[#34D399] font-semibold">{conjugations.future}</td>
+                  <td className="py-3 px-4 text-[#FCD34D]">{verbs.find(v => v.english === selectedVerb)?.hindi || ''}ेगा</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-
-          {selectedVerb && conjugations && (
-            <div className="overflow-x-auto">
-              <table className="min-w-full bg-white border border-gray-300 rounded-lg">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Tense
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Garo Ending
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Example
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      English
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Hindi
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  <tr>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      Present
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      -enga
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1B4332] font-medium">
-                      {conjugations.present}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      I {selectedVerb.toLowerCase()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      मैं {verbs.find(v => v.english === selectedVerb)?.hindi || ''}
-                    </td>
-                  </tr>
-                  <tr className="bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      Past
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      -aha
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1B4332] font-medium">
-                      {conjugations.past}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      I {selectedVerb.toLowerCase()}ed
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      मैं {verbs.find(v => v.english === selectedVerb)?.hindi || ''}ा
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      Future
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      -gen
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1B4332] font-medium">
-                      {conjugations.future}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      I will {selectedVerb.toLowerCase()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      मैं {verbs.find(v => v.english === selectedVerb)?.hindi || ''}ूँगा
-                    </td>
-                  </tr>
-                  <tr className="bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      Negative
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      ong·ja
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1B4332] font-medium">
-                      {conjugations.negative}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      I do not {selectedVerb.toLowerCase()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      मैं नहीं {verbs.find(v => v.english === selectedVerb)?.hindi || ''}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      Question
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      maia?
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1B4332] font-medium">
-                      {conjugations.question}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      Do I {selectedVerb.toLowerCase()}?
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      क्या मैं {verbs.find(v => v.english === selectedVerb)?.hindi || ''}?
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+        )}
 
         {!selectedVerb && (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">Select a verb to see its conjugations</p>
+            <p className="text-[#94A3B8] text-lg">Search for a verb to see conjugations</p>
           </div>
         )}
       </div>
